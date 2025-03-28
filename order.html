@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Bakery Products</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Place Your Order</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="order.html">Order</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section>
+        <h2>Order Form</h2>
+        <form id="orderForm">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="seat">Seat:</label>
+            <input type="text" id="seat" name="seat" required>
+
+            <!-- Product Section -->
+    <div id="productContainer">
+    <div class="product-item">
+     <label for="product1">Select Product:</label>
+      <select id="product1" name="product[]" required>
+        
+                        <option value="Croissant">Croissant</option>
+                        <option value="Chocolate Cake">Chocolate Cake</option>
+                        <option value="Cookies">Cookies</option>
+                        <option value="Muffin">Muffin</option>
+                        <option value="Bagel">Bagel</option>
+                        <option value="Donut">Donut</option>
+                        <option value="Cinnamon Roll">Cinnamon Roll</option>
+                        <option value="Apple Pie">Apple Pie</option>
+                        <option value="Brownie">Brownie</option>
+                        <option value="Cheese Danish">Cheese Danish</option>
+                        <option value="Lemon Cake">Lemon Cake</option>
+                        <option value="Brioche">Brioche</option>
+                        <option value="Scone">Scone</option>
+                        <option value="Tart">Tart</option>
+                    </select>
+<label for="quantity1">Quantity:</label>
+<input type="number" id="quantity1" name="quantity[]" min="1" required>
+             </div>
+            </div>
+
+       <button type="button" id="addProductButton">Add Another Product</button>
+       <button type="submit">Submit Order</button>
+        </form>
+        <div id="orderSummary"></div>
+    </section>
+    <footer>
+        <p>&copy; 2025 Bakery Management System</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+<body class="order-page">
+    <!-- Your order page content goes here -->
+</body>
