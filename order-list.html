@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="order-list-page">
+    <header>
+        <h1>Order List</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="order.html">Order</a></li>
+                <li><a href="order-list.html">View Order List</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section>
+        <h2>Orders</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Seat Number</th>
+                    <th>Products</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="orderList">
+                <!-- Orders will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Bakery Management System</p>
+    </footer>
+
+    <script>
+        // Define the prices for each product
+        const productPrices = {
+            "Croissant": 50,
+            "Chocolate_Cake": 40,
+            "Cookies": 35,
+            "Blueberry_Muffin": 55,
+            "Bagel": 45,
+            "Donut": 35,
+            "Cinnamon_Roll": 65,
+            "Apple_Pie": 55,
+            "Brownie": 60,
+            "Cheese_Danish": 50,
+            "Lemon_Cake": 40,
+            "Brioche": 55,
+            "Scone": 50,
+            "Tart": 65
+        };
+
+        // Retrieve orders from localStorage
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+        // Get the order list table body element
+        const orderList = document.getElementById('orderList');
+
+        // If there are no orders, show a message
+        if (orders.length === 0) {
+            orderList.innerHTML = "<tr><td colspan='6'>No orders placed yet.</td></tr>";
+        } else {
+            // Loop through orders and display them in the table
+            orders.forEach((order, index) => {
+                let productsHtml = '';
+                let totalPrice = 0;
+                
+                // Loop through each product and quantity in the order
+                order.products.forEach((product, i) => {
+                    const productPrice = productPrices[product] || 0;
+                    const quantity = order.quantities[i];
+                    const productTotal = productPrice * quantity;
+
+                    productsHtml += `<div>${product} (x${quantity}) - ₹${productPrice} each</div>`;
+
+                    totalPrice += productTotal;
+                });
+
+                // Add the order row with total price (without the price column)
+                let row = `<tr id="order-${index}">
+                    <td>${order.name}</td>
+                    <td>${order.seatNumber}</td>
+                    <td>${productsHtml}</td>
+                    <td>${order.quantities.join(', ')}</td>
+                    <td>₹${totalPrice.toFixed(2)}</td> <!-- Total Price -->
+                    <td><button class="remove-btn" onclick="removeOrder(${index})">Remove</button></td>
+                </tr>`;
+                orderList.innerHTML += row;
+            });
+        }
+
+        // Function to remove an order
+        function removeOrder(orderIndex) {
+            // Retrieve orders from localStorage
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+            // Remove the order from the orders array
+            orders.splice(orderIndex, 1);
+
+            // Save the updated orders back to localStorage
+            localStorage.setItem('orders', JSON.stringify(orders));
+
+            // Remove the order row from the table
+            const orderRow = document.getElementById(`order-${orderIndex}`);
+            orderRow.remove();
+
+            // If there are no more orders, show a message
+            if (orders.length === 0) {
+                orderList.innerHTML = "<tr><td colspan='6'>No orders placed yet.</td></tr>";
+            }
+        }
+    </script>
+</body>
+</html>

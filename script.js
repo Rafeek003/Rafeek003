@@ -43,11 +43,23 @@ document.getElementById('addProductButton').addEventListener('click', function()
     quantityInput.setAttribute('min', '1');
     quantityInput.required = true;
 
-    // Append the label, select, and input to the new product item div
+    // Create the Remove button
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.textContent = 'Remove Product';
+    removeButton.classList.add('remove-product');
+    
+    // Add event listener to remove the product item
+    removeButton.addEventListener('click', function() {
+        productContainer.removeChild(newProductItem);
+    });
+
+    // Append the label, select, input, and remove button to the new product item div
     newProductItem.appendChild(productLabel);
     newProductItem.appendChild(productSelect);
     newProductItem.appendChild(quantityLabel);
     newProductItem.appendChild(quantityInput);
+    newProductItem.appendChild(removeButton);
     
     // Append the new product item to the product container
     productContainer.appendChild(newProductItem);
@@ -58,7 +70,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
 
     // Get form data
     const name = document.getElementById('name').value;
-    const seat = document.getElementById('seat').value;
+    const seat = document.getElementById('seat number').value;
     const products = document.querySelectorAll('[name="product[]"]');
     const quantities = document.querySelectorAll('[name="quantity[]"]');
 
@@ -93,7 +105,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
         totalPrice += productTotal;
 
         // Add this product's details to the summary
-        orderDetails += `
+        orderDetails += ` 
             <p>Product: ${productName}</p>
             <p>Quantity: ${quantity}</p>
             <p>Price: ₹${productTotal.toFixed(2)}</p>
@@ -101,13 +113,23 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
         `;
     });
 
-    // Display order summary
-    const summary = `
+    // Create Delete button to delete the order
+    const deleteButton = `<button type="button" id="deleteOrderButton">Delete Order</button>`;
+
+    // Display order summary with Delete button
+    const summary = ` 
         <h3>Order Summary</h3>
         <p>Name: ${name}</p>
         <p>Seat: ${seat}</p>
         ${orderDetails}
         <p><strong>Total Price: ₹${totalPrice.toFixed(2)}</strong></p>
+        ${deleteButton}
     `;
     document.getElementById('orderSummary').innerHTML = summary;
+
+    // Attach event listener to delete the order when the delete button is clicked
+    document.getElementById('deleteOrderButton').addEventListener('click', function() {
+        document.getElementById('orderSummary').innerHTML = ''; // Clear the order summary
+    });
 });
+

@@ -6,7 +6,7 @@
     <title>Order Bakery Products</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="order-page">
     <header>
         <h1>Place Your Order</h1>
         <nav>
@@ -14,24 +14,25 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="products.html">Products</a></li>
                 <li><a href="order.html">Order</a></li>
+                <li><a href="order-list.html">View Order List</a></li>
             </ul>
         </nav>
     </header>
+
     <section>
         <h2>Order Form</h2>
         <form id="orderForm">
             <label for="name">Full Name:</label>
             <input type="text" id="name" name="name" required>
 
-            <label for="seat">Seat:</label>
-            <input type="text" id="seat" name="seat" required>
+            <label for="seatNumber">Seat Number:</label>
+            <input type="number" id="seatNumber" name="seatNumber" required>
 
             <!-- Product Section -->
-    <div id="productContainer">
-    <div class="product-item">
-     <label for="product1">Select Product:</label>
-      <select id="product1" name="product[]" required>
-        
+            <div id="productContainer">
+                <div class="product-item" id="product-item-1">
+                    <label for="product1">Select Product:</label>
+                    <select id="product1" name="product[]" required onchange="updateOrderSummary()">
                         <option value="Croissant">Croissant</option>
                         <option value="Chocolate Cake">Chocolate Cake</option>
                         <option value="Cookies">Cookies</option>
@@ -47,23 +48,122 @@
                         <option value="Scone">Scone</option>
                         <option value="Tart">Tart</option>
                     </select>
-<label for="quantity1">Quantity:</label>
-<input type="number" id="quantity1" name="quantity[]" min="1" required>
-             </div>
+
+                    <label for="quantity1">Product Quantity:</label>
+                    <input type="number" id="quantity1" name="quantity[]" min="1" required onchange="updateOrderSummary()">
+                </div>
             </div>
 
-       <button type="button" id="addProductButton">Add Another Product</button>
-       <button type="submit">Submit Order</button>
+            <button type="button" id="addProductButton" onclick="addProduct()">Add Another Product</button>
+            <button type="submit">Submit Order</button>
         </form>
-        <div id="orderSummary"></div>
     </section>
+
     <footer>
         <p>&copy; 2025 Bakery Management System</p>
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Define the prices for each product
+        const productPrices = {
+            "Croissant": 50,
+            "Chocolate Cake": 40,
+            "Cookies": 35,
+            "Muffin": 55,
+            "Bagel": 45,
+            "Donut": 35,
+            "Cinnamon Roll": 65,
+            "Apple Pie": 55,
+            "Brownie": 60,
+            "Cheese Danish": 50,
+            "Lemon Cake": 40,
+            "Brioche": 55,
+            "Scone": 50,
+            "Tart": 65
+        };
+
+        // Initialize product count
+        let productCount = 1;
+
+        // Function to update the order summary
+        // Removed as per your request.
+
+        // Function to add another product row
+        function addProduct() {
+            productCount++;
+            const productContainer = document.getElementById('productContainer');
+
+            // Create a new product row
+            const newProductRow = document.createElement('div');
+            newProductRow.classList.add('product-item');
+            newProductRow.id = `product-item-${productCount}`;
+
+            newProductRow.innerHTML = `
+                <label for="product${productCount}">Select Product:</label>
+                <select id="product${productCount}" name="product[]" required>
+                    <option value="Croissant">Croissant</option>
+                    <option value="Chocolate Cake">Chocolate Cake</option>
+                    <option value="Cookies">Cookies</option>
+                    <option value="Muffin">Muffin</option>
+                    <option value="Bagel">Bagel</option>
+                    <option value="Donut">Donut</option>
+                    <option value="Cinnamon Roll">Cinnamon Roll</option>
+                    <option value="Apple Pie">Apple Pie</option>
+                    <option value="Brownie">Brownie</option>
+                    <option value="Cheese Danish">Cheese Danish</option>
+                    <option value="Lemon Cake">Lemon Cake</option>
+                    <option value="Brioche">Brioche</option>
+                    <option value="Scone">Scone</option>
+                    <option value="Tart">Tart</option>
+                </select>
+
+                <label for="quantity${productCount}">Product Quantity:</label>
+                <input type="number" id="quantity${productCount}" name="quantity[]" min="1" required>
+            `;
+
+            productContainer.appendChild(newProductRow);
+        }
+
+        // When the form is submitted, store the order in localStorage
+        document.getElementById('orderForm').addEventListener('submit', function (event) {
+            event.preventDefault();  // Prevent form from submitting traditionally
+
+            // Get the form data
+            const name = document.getElementById('name').value;
+            const seatNumber = document.getElementById('seatNumber').value;
+            const products = [];
+            const quantities = [];
+
+            // Get product and quantity data
+            const productElements = document.querySelectorAll('select[name="product[]"]');
+            const quantityElements = document.querySelectorAll('input[name="quantity[]"]');
+            
+            productElements.forEach((productElement, index) => {
+                products.push(productElement.value);
+                quantities.push(quantityElements[index].value);
+            });
+
+            // Create the order object
+            const order = {
+                name,
+                seatNumber,
+                products,
+                quantities
+            };
+
+            // Retrieve existing orders from localStorage
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+            // Add the new order to the list of orders
+            orders.push(order);
+
+            // Save the updated orders back to localStorage
+            localStorage.setItem('orders', JSON.stringify(orders));
+
+            // Redirect to the Order List page
+            window.location.href = 'order-list.html';
+        });
+    </script>
 </body>
 </html>
-<body class="order-page">
-    <!-- Your order page content goes here -->
-</body>
