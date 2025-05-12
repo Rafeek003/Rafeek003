@@ -1,169 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Bakery Products</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Bakery Products</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="order-page">
-    <header>
-        <h1>Place Your Order</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="order.html">Order</a></li>
-                <li><a href="order-list.html">View Order List</a></li>
-            </ul>
-        </nav>
-    </header>
+  <header>
+    <h1>Place Your Order</h1>
+    <nav>
+      <ul>
+        
+        <li><a href="order.html">Order</a></li>
+        <li><a href="order-list.html">View Order List</a></li>
+        <li><a href="bill-generate.html">View Bills</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <section>
-        <h2>Order Form</h2>
-        <form id="orderForm">
-            <label for="name">Full Name:</label>
-            <input type="text" id="name" name="name" required>
+  <section>
+    <h2>Order Form</h2>
+    <form id="orderForm">
+      
 
-            <label for="seatNumber">Seat Number:</label>
-            <input type="number" id="seatNumber" name="seatNumber" required>
+      <!-- Product Section -->
+      <div id="productContainer">
+        <div class="product-item" id="product-item-1">
+          <label for="product1">Select Product:</label>
+          <select id="product1" name="product[]" required>
+            <option value="chicken rice">chicken rice</option>
+            <option value="chicken noodles">chicken noodles</option>
+            <option value="beef rice">beef rice</option>
+            <option value="beef noodles">beef noodles</option>
+            <option value="boneless chicken">boneless chicken</option>
+            <option value="peper chicken">peper chicken</option>
+            <option value="chilli chicken">chilli chicken</option>
+            <option value="chettinad chicken">chettinad chicken</option>
+            <option value="chicken 65">chicken 65</option>
+            <option value="gobi 65">gobi 65</option>
+            <option value="mashroom 65">mashroom 65</option>
+            <option value="veg rice">veg rice</option>
+            <option value="veg noodles">veg noodles</option>
+           <option value="egg rice">egg rice</option>
+            <option value="egg noodles">egg noodles</option>
+            <option value="mashroom rice">mashroom rice</option>
+            <option value="mashroom noodles">mashroom noodles</option>
+          </select>
 
-            <!-- Product Section -->
-            <div id="productContainer">
-                <div class="product-item" id="product-item-1">
-                    <label for="product1">Select Product:</label>
-                    <select id="product1" name="product[]" required onchange="updateOrderSummary()">
-                        <option value="Croissant">Croissant</option>
-                        <option value="Chocolate Cake">Chocolate Cake</option>
-                        <option value="Cookies">Cookies</option>
-                        <option value="Muffin">Muffin</option>
-                        <option value="Bagel">Bagel</option>
-                        <option value="Donut">Donut</option>
-                        <option value="Cinnamon Roll">Cinnamon Roll</option>
-                        <option value="Apple Pie">Apple Pie</option>
-                        <option value="Brownie">Brownie</option>
-                        <option value="Cheese Danish">Cheese Danish</option>
-                        <option value="Lemon Cake">Lemon Cake</option>
-                        <option value="Brioche">Brioche</option>
-                        <option value="Scone">Scone</option>
-                        <option value="Tart">Tart</option>
-                    </select>
+          <label for="quantity1">Product Quantity:</label>
+          <input type="number" id="quantity1" name="quantity[]" min="1" required />
+        </div>
+      </div>
 
-                    <label for="quantity1">Product Quantity:</label>
-                    <input type="number" id="quantity1" name="quantity[]" min="1" required onchange="updateOrderSummary()">
-                </div>
-            </div>
+      <button type="button" id="addProductButton" onclick="addProduct()">Add Another Product</button>
+      <button type="submit">Submit Order</button>
+    </form>
+  </section>
 
-            <button type="button" id="addProductButton" onclick="addProduct()">Add Another Product</button>
-            <button type="submit">Submit Order</button>
-        </form>
-    </section>
+  <footer>
+    <p>&copy; FOOD BAZAAR</p>
+  </footer>
 
-    <footer>
-        <p>&copy; 2025 Bakery Management System</p>
-    </footer>
+  <script>
+    let productCount = 1;
 
-    <script src="script.js"></script>
-    <script>
-        // Define the prices for each product
-        const productPrices = {
-            "Croissant": 50,
-            "Chocolate Cake": 40,
-            "Cookies": 35,
-            "Muffin": 55,
-            "Bagel": 45,
-            "Donut": 35,
-            "Cinnamon Roll": 65,
-            "Apple Pie": 55,
-            "Brownie": 60,
-            "Cheese Danish": 50,
-            "Lemon Cake": 40,
-            "Brioche": 55,
-            "Scone": 50,
-            "Tart": 65
-        };
+    const productOptions = `
+      <option value="chicken rice">chicken rice</option>
+      <option value="chicken noodles">chicken noodles</option>
+      <option value="beef rice">beef rice</option>
+      <option value="beef noodles">beef noodles</option>
+      <option value="boneless chicken">boneless chicken</option>
+      <option value="peper chicken">peper chicken</option>
+      <option value="chilli chicken">chilli chicken</option>
+      <option value="chettinad chicken">chettinad chicken</option>
+      <option value="chicken 65">chicken 65</option>
+      <option value="gobi 65">gobi 65</option>
+      <option value="mashroom 65">mashroom 65</option>
+      <option value="veg rice">veg rice</option>
+      <option value="veg noodles">veg noodles</option>
+      <option value="egg rice">egg rice</option>
+      <option value="egg noodles">egg noodles</option>
+      <option value="mashroom rice">mashroom rice</option>
+      <option value="mashroom noodles">mashroom noodles</option>
+    `;
+    
 
-        // Initialize product count
-        let productCount = 1;
+    function addProduct() {
+  productCount++;
+  const container = document.getElementById('productContainer');
 
-        // Function to update the order summary
-        // Removed as per your request.
+  const newDiv = document.createElement('div');
+  newDiv.classList.add('product-item');
+  newDiv.id = `product-item-${productCount}`;
+  newDiv.innerHTML = `
+    <label for="product${productCount}">Select Product:</label>
+    <select id="product${productCount}" name="product[]" required>
+      ${productOptions}
+    </select>
 
-        // Function to add another product row
-        function addProduct() {
-            productCount++;
-            const productContainer = document.getElementById('productContainer');
+    <label for="quantity${productCount}">Product Quantity:</label>
+    <input type="number" id="quantity${productCount}" name="quantity[]" min="1" required />
 
-            // Create a new product row
-            const newProductRow = document.createElement('div');
-            newProductRow.classList.add('product-item');
-            newProductRow.id = `product-item-${productCount}`;
+    <button type="button" onclick="removeProduct(${productCount})">Remove</button>
+  `;
 
-            newProductRow.innerHTML = `
-                <label for="product${productCount}">Select Product:</label>
-                <select id="product${productCount}" name="product[]" required>
-                    <option value="Croissant">Croissant</option>
-                    <option value="Chocolate Cake">Chocolate Cake</option>
-                    <option value="Cookies">Cookies</option>
-                    <option value="Muffin">Muffin</option>
-                    <option value="Bagel">Bagel</option>
-                    <option value="Donut">Donut</option>
-                    <option value="Cinnamon Roll">Cinnamon Roll</option>
-                    <option value="Apple Pie">Apple Pie</option>
-                    <option value="Brownie">Brownie</option>
-                    <option value="Cheese Danish">Cheese Danish</option>
-                    <option value="Lemon Cake">Lemon Cake</option>
-                    <option value="Brioche">Brioche</option>
-                    <option value="Scone">Scone</option>
-                    <option value="Tart">Tart</option>
-                </select>
+  container.appendChild(newDiv);
+}
 
-                <label for="quantity${productCount}">Product Quantity:</label>
-                <input type="number" id="quantity${productCount}" name="quantity[]" min="1" required>
-            `;
+    function removeProduct(id) {
+  const element = document.getElementById(`product-item-${id}`);
+  if (element) {
+    element.remove();
+  }
+}
 
-            productContainer.appendChild(newProductRow);
+
+    document.getElementById('orderForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      
+      const productElements = document.querySelectorAll('select[name="product[]"]');
+      const quantityElements = document.querySelectorAll('input[name="quantity[]"]');
+
+      const products = [];
+      const quantities = [];
+
+      productElements.forEach((el, i) => {
+        const prod = el.value;
+        const qty = parseInt(quantityElements[i].value);
+        if (prod && qty > 0) {
+          products.push(prod);
+          quantities.push(qty);
         }
+      });
+      
 
-        // When the form is submitted, store the order in localStorage
-        document.getElementById('orderForm').addEventListener('submit', function (event) {
-            event.preventDefault();  // Prevent form from submitting traditionally
+      if (products.length === 0) {
+        alert("Please select at least one valid product with quantity.");
+        return;
+      }
 
-            // Get the form data
-            const name = document.getElementById('name').value;
-            const seatNumber = document.getElementById('seatNumber').value;
-            const products = [];
-            const quantities = [];
+      const order = {
+        
+        products,
+        quantities
+      };
 
-            // Get product and quantity data
-            const productElements = document.querySelectorAll('select[name="product[]"]');
-            const quantityElements = document.querySelectorAll('input[name="quantity[]"]');
-            
-            productElements.forEach((productElement, index) => {
-                products.push(productElement.value);
-                quantities.push(quantityElements[index].value);
-            });
+      let orders = JSON.parse(localStorage.getItem('orders')) || [];
+      orders.push(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
 
-            // Create the order object
-            const order = {
-                name,
-                seatNumber,
-                products,
-                quantities
-            };
-
-            // Retrieve existing orders from localStorage
-            let orders = JSON.parse(localStorage.getItem('orders')) || [];
-
-            // Add the new order to the list of orders
-            orders.push(order);
-
-            // Save the updated orders back to localStorage
-            localStorage.setItem('orders', JSON.stringify(orders));
-
-            // Redirect to the Order List page
-            window.location.href = 'order-list.html';
-        });
-    </script>
+      window.location.href = 'order-list.html';
+    });
+  </script>
 </body>
 </html>

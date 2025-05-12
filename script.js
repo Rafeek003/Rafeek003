@@ -69,8 +69,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     event.preventDefault();
 
     // Get form data
-    const name = document.getElementById('name').value;
-    const seat = document.getElementById('seat number').value;
+    
     const products = document.querySelectorAll('[name="product[]"]');
     const quantities = document.querySelectorAll('[name="quantity[]"]');
 
@@ -85,20 +84,23 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
         // Calculate price based on selected product
         let price = 0;
         switch (productName) {
-            case 'Croissant': price = 50; break;
-            case 'Chocolate Cake': price = 40; break;
-            case 'Cookies': price = 35; break;
-            case 'Muffin': price = 55; break;
-            case 'Bagel': price = 45; break;
-            case 'Donut': price = 35; break;
-            case 'Cinnamon Roll': price = 65; break;
-            case 'Apple Pie': price = 55; break;
-            case 'Brownie': price = 60; break;
-            case 'Cheese Danish': price = 50; break;
-            case 'Lemon Cake': price = 40; break;
-            case 'Brioche': price = 55; break;
-            case 'Scone': price = 50; break;
-            case 'Tart': price = 65; break;
+            case 'chicken rice': price = 90; break;
+            case 'chicken noodles': price = 90; break;
+            case 'beef rice': price = 120; break;
+            case 'beef noodles': price = 120; break;
+            case 'boneless chicken': price = 100; break;
+            case 'peper chicken': price = 130; break;
+            case 'chilli chicken': price = 130; break;
+            case 'chettinad chicken': price = 140; break;
+            case 'chicken 65': price = 60; break;
+            case 'gobi 65': price = 60; break;
+            case 'mashroom 65': price = 60; break;
+            case 'veg rice': price = 70; break;
+            case 'veg noodles': price = 70; break;
+            case 'egg rice': price = 80; break;
+            case 'egg noodles': price = 80; break;
+            case 'mashroom rice': price = 90; break;
+            case 'mashroom noodles': price = 90; break;
         }
 
         const productTotal = price * quantity;
@@ -119,8 +121,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     // Display order summary with Delete button
     const summary = ` 
         <h3>Order Summary</h3>
-        <p>Name: ${name}</p>
-        <p>Seat: ${seat}</p>
+        
         ${orderDetails}
         <p><strong>Total Price: ₹${totalPrice.toFixed(2)}</strong></p>
         ${deleteButton}

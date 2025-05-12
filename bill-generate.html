@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WELCOME TO FOOD BAZAAR</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 10px 0 0 0;
+    }
+
+    nav ul li {
+      display: inline;
+      margin-right: 20px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+
+    section {
+      padding: 20px;
+      background-color: white;
+      margin: 20px auto;
+      max-width: 800px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .bill-meta {
+      text-align: right;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table th, table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #333;
+      color: white;
+    }
+
+    .bill-total {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+      padding-top: 10px;
+    }
+
+    button {
+      display: block;
+      width: 200px;
+      margin: 30px auto 10px;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    #qrcode {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px 0;
+      background-color: #333;
+      color: white;
+      margin-top: 40px;
+    }
+
+    @media print {
+      header, footer, button {
+        display: none;
+      }
+      section {
+        box-shadow: none;
+        margin: 0;
+      }
+    }
+  </style>
+  <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/master/qrcode.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Bill Generation</h1>
+    <nav>
+      <ul>
+        <li><a href="order.html">Order</a></li>
+        <li><a href="order-list.html">View Order List</a></li>
+        <li><a href="bill-generate.html">View Bills</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section>
+    <h2>FOOD BAZAAR'S BILL</h2>
+    <div class="bill-meta">
+      
+      <div>Date: <span id="billDate"></span></div>
+    </div>
+    <div id="billDetails">
+      <!-- Bill will be dynamically inserted here -->
+    </div>
+    <div id="qrcode"></div>
+    <button onclick="window.print()">Print Bill</button>
+  </section>
+
+  <footer>
+    <p>&copy; FOOD BAZAAR</p>
+  </footer>
+  <script>
+    const productPrices = {
+      "chicken rice": 90,
+      "chicken noodles": 90,
+      "beef rice": 120,
+      "beef noodles": 120,
+      "boneless chicken": 100,
+      "peper chicken": 130,
+      "chilli chicken": 130,
+      "chettinad chicken": 140,
+      "chicken 65": 60,
+      "gobi 65": 60,
+      "mashroom 65": 60,
+      "veg rice": 70,
+      "veg noodles": 70,
+      "egg rice": 80,
+      "egg noodles": 80,
+      "mashroom rice": 90,
+      "mashroom noodles": 90
+    };
+
+    const order = JSON.parse(localStorage.getItem('currentOrder'));
+    const billNumber = 'FB' + Math.floor(100000 + Math.random() * 900000);
+    const billDate = new Date().toLocaleString();
+
+    
+    document.getElementById('billDate').textContent = billDate;
+
+    if (order) {
+      const billDetails = document.getElementById('billDetails');
+      let productsHtml = '';
+      let totalPrice = 0;
+      let qrContent = `Bill No: ${billNumber}\nDate: ${billDate}\nItems:\n`;
+
+      order.products.forEach((product, i) => {
+        const price = productPrices[product] || 0;
+        const qty = order.quantities[i];
+        const total = price * qty;
+        productsHtml += `
+          <tr>
+            <td>${product.replace(/_/g, ' ')}</td>
+            <td>${qty}</td>
+            <td>₹${price}</td>
+            <td>₹${total.toFixed(2)}</td>
+          </tr>`;
+        totalPrice += total;
+        qrContent += `${product} x${qty} - ₹${total}\n`;
+      });
+
+      billDetails.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Price per Item</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>${productsHtml}</tbody>
+        </table>
+        <div class="bill-total">Total Amount: ₹${totalPrice.toFixed(2)}</div>
+      `;
+
+      qrContent += `Total: ₹${totalPrice.toFixed(2)}`;
+
+      // Generate QR code
+      new QRCode(document.getElementById("qrcode"), {
+        text: qrContent,
+        width: 10,
+        height: 10
+      });
+
+    } else {
+      document.getElementById('billDetails').innerHTML = '<p>No order details available.</p>';
+    }
+  </script>
+</body>
+</html>

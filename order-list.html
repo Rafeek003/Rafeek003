@@ -1,126 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order List</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order List</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="order-list-page">
-    <header>
-        <h1>Order List</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
-                <li><a href="order.html">Order</a></li>
-                <li><a href="order-list.html">View Order List</a></li>
-            </ul>
-        </nav>
-    </header>
+  <header>
+    <h1>Order List</h1>
+    <nav>
+      <ul>
 
-    <section>
-        <h2>Orders</h2>
+        <li><a href="order.html">Order</a></li>
+        <li><a href="order-list.html">View Order List</a></li>
+        <li><a href="bill-generate.html">View Bills</a></li>
+      </ul>
+    </nav>
+  </header>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Seat Number</th>
-                    <th>Products</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="orderList">
-                <!-- Orders will be dynamically inserted here -->
-            </tbody>
-        </table>
-    </section>
+  <section>
+    <h2>Orders</h2>
+    
+   <table>
+  <thead>
+    <tr>
+      <th>Products</th>
+      <th>Quantity</th>
+      <th>Total</th>
+      <th>Action</th>
+      <button onclick="clearAllOrders()" style="margin-bottom: 10px;">Clear All Orders</button>
 
-    <footer>
-        <p>&copy; 2025 Bakery Management System</p>
-    </footer>
+    </tr>
+  </thead>
+  <tbody id="orderList">
+    <!-- Orders will be dynamically inserted here -->
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"><strong>Grand Total</strong></td>
+      <td colspan="2" id="grandTotal">₹0.00</td>
+    </tr>
+  </tfoot>
+</table>
 
-    <script>
-        // Define the prices for each product
-        const productPrices = {
-            "Croissant": 50,
-            "Chocolate_Cake": 40,
-            "Cookies": 35,
-            "Blueberry_Muffin": 55,
-            "Bagel": 45,
-            "Donut": 35,
-            "Cinnamon_Roll": 65,
-            "Apple_Pie": 55,
-            "Brownie": 60,
-            "Cheese_Danish": 50,
-            "Lemon_Cake": 40,
-            "Brioche": 55,
-            "Scone": 50,
-            "Tart": 65
-        };
+  </section>
 
-        // Retrieve orders from localStorage
-        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+  <footer>
+    <p>&copy; FOOD BAZAAR</p>
+  </footer>
 
-        // Get the order list table body element
-        const orderList = document.getElementById('orderList');
+  <script>
+    const productPrices = {
+      "chicken rice": 90,
+      "chicken noodles": 90,
+      "beef rice": 120,
+      "beef noodles": 120,
+      "boneless chicken": 100,
+      "peper chicken": 130,
+      "chilli chicken": 130,
+      "chettinad chicken": 140,
+      "chicken 65": 60,
+      "gobi 65": 60,
+      "mashroom 65": 60,
+      "veg rice": 70,
+      "veg noodles": 70,
+      "egg rice": 80,
+      "egg noodles": 80,
+      "mashroom rice": 90,
+      "mashroom noodles": 90
+    };
 
-        // If there are no orders, show a message
-        if (orders.length === 0) {
-            orderList.innerHTML = "<tr><td colspan='6'>No orders placed yet.</td></tr>";
-        } else {
-            // Loop through orders and display them in the table
-            orders.forEach((order, index) => {
-                let productsHtml = '';
-                let totalPrice = 0;
-                
-                // Loop through each product and quantity in the order
-                order.products.forEach((product, i) => {
-                    const productPrice = productPrices[product] || 0;
-                    const quantity = order.quantities[i];
-                    const productTotal = productPrice * quantity;
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const orderList = document.getElementById('orderList');
 
-                    productsHtml += `<div>${product} (x${quantity}) - ₹${productPrice} each</div>`;
+    function renderOrders() {
+      orderList.innerHTML = '';
 
-                    totalPrice += productTotal;
-                });
+      if (orders.length === 0) {
+        orderList.innerHTML = "<tr><td colspan='6'>No orders placed yet.</td></tr>";
+        return;
+      }
 
-                // Add the order row with total price (without the price column)
-                let row = `<tr id="order-${index}">
-                    <td>${order.name}</td>
-                    <td>${order.seatNumber}</td>
-                    <td>${productsHtml}</td>
-                    <td>${order.quantities.join(', ')}</td>
-                    <td>₹${totalPrice.toFixed(2)}</td> <!-- Total Price -->
-                    <td><button class="remove-btn" onclick="removeOrder(${index})">Remove</button></td>
-                </tr>`;
-                orderList.innerHTML += row;
-            });
+      orders.forEach((order, index) => {
+        let productDetails = '<ul>';
+        let totalPrice = 0;
+
+        order.products.forEach((product, i) => {
+          const price = productPrices[product] || 0;
+          const qty = order.quantities[i];
+          productDetails += `<li>${product.replace(/_/g, ' ')} (x${qty}) - ₹${price}</li>`;
+          totalPrice += price * qty;
+        });
+        productDetails += '</ul>';
+
+        const row = document.createElement('tr');
+        row.id = `order-${index}`;
+        row.innerHTML = `
+          
+          <td>${productDetails}</td>
+          <td>${order.quantities.join(', ')}</td>
+          <td>₹${totalPrice.toFixed(2)}</td>
+          <td>
+            <button onclick="editOrder(${index})">Edit</button>
+            <button onclick="removeOrder(${index})">Remove</button>
+            <button onclick="generateBill(${index})">Generate Bill</button>
+          </td>
+        `;
+        orderList.appendChild(row);
+      });
+    }
+
+    function removeOrder(index) {
+      orders.splice(index, 1);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      renderOrders();
+    }
+
+    function editOrder(index) {
+      const order = orders[index];
+      const row = document.getElementById(`order-${index}`);
+
+      const productInputs = order.products.map((product, i) => {
+        return `
+          <div>
+            <select id="edit-product-${i}">
+              ${Object.keys(productPrices).map(p => `
+                <option value="${p}" ${p === product ? 'selected' : ''}>${p.replace(/_/g, ' ')}</option>
+              `).join('')}
+            </select>
+            x 
+            <input type="number" id="edit-qty-${i}" value="${order.quantities[i]}" min="1">
+          </div>
+        `;
+      }).join('');
+
+      row.innerHTML = `
+        
+        <td>${productInputs}</td>
+        <td>-</td>
+        <td>-</td>
+        <td>
+          <button onclick="saveOrder(${index}, ${order.products.length})">Save</button>
+          <button onclick="renderOrders()">Cancel</button>
+        </td>
+      `;
+    }
+
+    function saveOrder(index, productCount) {
+     
+
+      const updatedProducts = [];
+      const updatedQuantities = [];
+
+      for (let i = 0; i < productCount; i++) {
+        const product = document.getElementById(`edit-product-${i}`).value;
+        const quantity = parseInt(document.getElementById(`edit-qty-${i}`).value);
+        if (product && quantity > 0) {
+          updatedProducts.push(product);
+          updatedQuantities.push(quantity);
         }
+      }
 
-        // Function to remove an order
-        function removeOrder(orderIndex) {
-            // Retrieve orders from localStorage
-            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+      orders[index] = {
+       
+        products: updatedProducts,
+        quantities: updatedQuantities
+      };
 
-            // Remove the order from the orders array
-            orders.splice(orderIndex, 1);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      renderOrders();
+    }
 
-            // Save the updated orders back to localStorage
-            localStorage.setItem('orders', JSON.stringify(orders));
+    function generateBill(index) {
+      const order = orders[index];
+      localStorage.setItem('currentOrder', JSON.stringify(order));
+      window.location.href = 'bill-generate.html';
+    }
 
-            // Remove the order row from the table
-            const orderRow = document.getElementById(`order-${orderIndex}`);
-            orderRow.remove();
+    renderOrders();
+    function renderOrders() {
+  orderList.innerHTML = '';
+  let grandTotal = 0;
 
-            // If there are no more orders, show a message
-            if (orders.length === 0) {
-                orderList.innerHTML = "<tr><td colspan='6'>No orders placed yet.</td></tr>";
-            }
-        }
-    </script>
+  if (orders.length === 0) {
+    orderList.innerHTML = "<tr><td colspan='4'>No orders placed yet.</td></tr>";
+    document.getElementById('grandTotal').innerText = '₹0.00';
+    return;
+  }
+
+  orders.forEach((order, index) => {
+    let productDetails = '<ul>';
+    let totalPrice = 0;
+
+    order.products.forEach((product, i) => {
+      const price = productPrices[product] || 0;
+      const qty = order.quantities[i];
+      productDetails += `<li>${product.replace(/_/g, ' ')} (x${qty}) - ₹${price}</li>`;
+      totalPrice += price * qty;
+    });
+    productDetails += '</ul>';
+
+    grandTotal += totalPrice;
+
+    const row = document.createElement('tr');
+    row.id = `order-${index}`;
+    row.innerHTML = `
+      <td>${productDetails}</td>
+      <td>${order.quantities.join(', ')}</td>
+      <td>₹${totalPrice.toFixed(2)}</td>
+      <td>
+        <button onclick="editOrder(${index})">Edit</button>
+        <button onclick="removeOrder(${index})">Remove</button>
+        <button onclick="generateBill(${index})">Generate Bill</button>
+      </td>
+    `;
+    orderList.appendChild(row);
+  });
+
+  // Update grand total in footer
+  document.getElementById('grandTotal').innerText = `₹${grandTotal.toFixed(2)}`;
+}
+function clearAllOrders() {
+  if (confirm("Are you sure you want to clear all orders?")) {
+    orders = [];
+    localStorage.removeItem('orders');
+    renderOrders();
+  }
+}
+
+
+  </script>
 </body>
 </html>
